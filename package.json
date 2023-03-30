@@ -7,7 +7,6 @@
     "test": "tests"
   },
   "scripts": {
-    "build": "npm run build",
     "test": "jest"
   },
   "repository": {
@@ -22,5 +21,8 @@
   "homepage": "https://github.com/jullysilva/Passa-Palavra#readme",
   "devDependencies": {
     "jest": "^29.5.0"
+  },
+  "dependencies": {
+    "gh-pages": "^3.2.3"
   }
 }

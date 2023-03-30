@@ -4,6 +4,7 @@
   "description": "Trabalho passa palavra TIS1 PUC Referêcia:(começa aos 52:10) https://www.youtube.com/watch?v=UjTjFdgmbiU",
   "main": "index.js",
   "directories": {
+    "build": "react-scripts build",
     "test": "tests"
   },
   "scripts": {

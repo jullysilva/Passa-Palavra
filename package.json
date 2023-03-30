@@ -1,0 +1,25 @@
+{
+  "name": "passa-palavra",
+  "version": "1.0.0",
+  "description": "Trabalho passa palavra TIS1 PUC Referêcia:(começa aos 52:10) https://www.youtube.com/watch?v=UjTjFdgmbiU",
+  "main": "index.js",
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jullysilva/Passa-Palavra.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jullysilva/Passa-Palavra/issues"
+  },
+  "homepage": "https://github.com/jullysilva/Passa-Palavra#readme",
+  "devDependencies": {
+    "jest": "^29.5.0"
+  }
+}

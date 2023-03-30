@@ -20,32 +20,33 @@ let perguntas_passadas = []
 // Cria objeto player para salvar todas as variaveis de multijogador
 sessionStorage.setItem("numplayer", 0);
 var numplayer = sessionStorage.getItem('numplayer');
+let regNovo = null;
 
 
 function mudarJogador() {
   if (sessionStorage.getItem('jogador') == "multiplayer") {
     if (numplayer == 1) {
-      if (jogador.player[0].marcador_fim){
-        if (jogador.player[0].perguntas_passadas.lenght){
+      if (jogador.player[0].marcador_fim) {
+        if (jogador.player[0].perguntas_passadas.lenght) {
           numplayer = 0;
           sessionStorage.setItem('numplayer', 0);
         }
-        else{
+        else {
           return
         }
-      }else{
+      } else {
         numplayer = 0;
         sessionStorage.setItem('numplayer', 0);
       }
-    }else {
-      if(jogador.player[1].marcador_fim){
-        if(jogador.player[1].perguntas_passadas.lenght){
+    } else {
+      if (jogador.player[1].marcador_fim) {
+        if (jogador.player[1].perguntas_passadas.lenght) {
           numplayer = 1;
           sessionStorage.setItem('numplayer', 1);
-        }else{
+        } else {
           return
         }
-      }else{
+      } else {
         numplayer = 1;
         sessionStorage.setItem('numplayer', 1);
       }
@@ -143,7 +144,7 @@ function LerPergunta(i) {
     DB = JSON.parse(localStorage.getItem('DADOS'))
   }
   if (LETTER_COUNT < 26 || jogador.player[numplayer].perguntas_passadas.length) {
-    if (LETTER_COUNT == -1){
+    if (LETTER_COUNT == -1) {
       FinalizaJogo(-1)
     }
     TEMA_ATUAL = sessionStorage.getItem('TEMA_ATUAL');
@@ -367,22 +368,22 @@ function FinalizaJogo(i) {
   carregaVariaveis();
   if (i = 26 && !perguntas_passadas.length || i == -1) {
 
-    if(numplayer == 1 && jogador.player[1].perguntas_passadas){
+    if (numplayer == 1 && jogador.player[1].perguntas_passadas) {
       console.log("here4")
       jogador.player[0].perguntas_passadas.lenght
       mudarJogador()
     }
-    if(numplayer == 0 && jogador.player[0].perguntas_passadas){
+    if (numplayer == 0 && jogador.player[0].perguntas_passadas) {
       mudarJogador()
     }
     console.log("here2")
     document.getElementById('button-res').innerHTML = 'Finalizar Jogo';
-    document.getElementById('button-res').onclick = function() {
+    document.getElementById('button-res').onclick = function () {
       router('tela_jogo', 0)
     };
-  }else {
+  } else {
     if (jogador.player[numplayer].marcador_fim == 0) {
-      perguntas_passadas.push({indice: -1, random:-1});
+      perguntas_passadas.push({ indice: -1, random: -1 });
       perguntas_passadas.reverse()
       marcador_fim = 1;
       salvarVariaveis();
@@ -412,6 +413,9 @@ function LetraFoco(letra, respondida) {
 
 //TODO: Adicionar perguntas
 function adicionarQuestao() {
+  if (regNovo == null) {
+    alert('Insira o tema e confirme-o, antes de adicionar perguntas e repostas!')
+  }
   if (localStorage.getItem('DADOS')) {
     DB = JSON.parse(localStorage.getItem('DADOS'))
   }
@@ -435,17 +439,48 @@ function adicionarQuestao() {
   }
 }
 
-//
-function salvarTema() {
-  for (var i = 0; i < 26; i++) {
-    if (regNovo[campoTema][i] == null) {
-      regNovo[campoTema][i] = "";
+function verificaLetrasQuestoes() {
+  const selectElement = document.querySelector('#campo-letra');
+  const options = selectElement.querySelectorAll('option');
+  
+  let allDisabled = true;
+  
+  for (let i = 0; i < options.length; i++) {
+    if (!options[i].disabled) {
+      allDisabled = false;
+      break;
     }
   }
-  DB[campoTema] = regNovo[campoTema];
-  localStorage.setItem("DADOS", JSON.stringify(DB));
-  router("tela_criar_tema", 0);
+  
+  if (allDisabled) {
+    console.log('Todas as opções estão desabilitadas!');
+    return true;
+  } else {
+    console.log('Algumas opções estão habilitadas.');
+    return false;
+  }  
 }
+
+
+//
+function salvarTema() {
+  var QuestoesList = document.getElementById('campo-questoes');
+  var regNovoVar = regNovo;
+
+  if (regNovoVar !== null && QuestoesList && QuestoesList.childElementCount > 0 && verificaLetrasQuestoes()) {
+    for (var i = 0; i < 26; i++) {
+      if (regNovoVar[i] == null) {
+        regNovoVar[i] = "";
+      }
+    }
+    DB[campoTema] = regNovoVar;
+    localStorage.setItem("DADOS", JSON.stringify(DB));
+    router("tela_criar_tema", 0);
+  } else {
+    alert('Preencha e confirme os campos obrigatórios, certifique-se que todas as letras foram selecionadas');
+  }
+}
+
 
 //
 function confirmaTema() {
@@ -466,16 +501,28 @@ function deleteArray(tema, x, y) {
   preencheQuestoes();
 }
 
+function verificaAlfabetoQuestoes(cont) {
+  let letra = String.fromCharCode(cont + 65);
+  let option_letra = document.querySelector(`#letra-${letra}`.toLowerCase());
+  if (cont < 25) {
+    let next_letra = String.fromCharCode(cont + 66);
+    let next_option_letra = document.querySelector(`#letra-${next_letra}`.toLowerCase());
+    next_option_letra.setAttribute('selected', '');
+  }
+  option_letra.setAttribute('disabled', '');
+}
+
 function preencheQuestoes() {
   document.getElementById('campo-questoes').innerHTML = "Questões:<br>";
-  for (let cont = 0; cont < 25; cont++) {
+  for (let cont = 0; cont <= 25; cont++) {
     if (regNovo[campoTema][cont] != null) {
       for (let cont2 = 0; cont2 < regNovo[campoTema][cont].length; cont2++) {
+        verificaAlfabetoQuestoes(cont);
         document.getElementById('campo-questoes').innerHTML += `
                 <button class="btn btn-light" onclick="deleteArray('${campoTema}',${cont},${cont2})"><img width="20px" src="../img/trash.svg"></button>
                 <button class="btn btn-light" onclick="editArray('${campoTema}',${cont},${cont2})"><img width="20px" src="../img/pencil.svg"></button>
                 Tema: ${campoTema}
-                - Letra: ${String.fromCharCode(cont+65)}
+                - Letra: ${String.fromCharCode(cont + 65)}
                 - Pergunta: ${regNovo[campoTema][cont][cont2].pergunta}
                 - Resposta: ${regNovo[campoTema][cont][cont2].resposta} <br>`;
       }

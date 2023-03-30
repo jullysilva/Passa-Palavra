@@ -44,3 +44,12 @@
 	width: 2em; height: 2em;
 	margin: -1em; /* 2em = 4em/2 */ /* half the width */
 }
+
+#jogadores img{
+	transition: transform 0.2s ease;
+	cursor: pointer;
+}
+
+#jogadores img:hover {
+	transform: translateY(-10px);
+}

@@ -1,65 +1,29 @@
-name: Analize, Build and Deploy
+name: Build and Test
 
 on:
-  push:
-    branches: [ master ]
   pull_request:
-    branches: [ master ]
-  schedule:
-    - cron: '56 5 * * 1'
-  workflow_call:
+    branches:
+      - main
 
 jobs:
-  build:
-    if: github.event_name != 'pull_request'
+  build-and-test:
     runs-on: ubuntu-latest
-    needs: [test]
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-      - name: Build
-        run: npm run build
-  test:
-    runs-on: ubuntu-latest
-    needs: [analyze]
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-      - name: Install dependencies
-        run: npm install
-      - name: Run tests
-        run: npm test
-  analyze:
-    name: Analyze
-    runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        language:
-          - javascript
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v2
+    - name: Checkout code
+      uses: actions/checkout@v2
 
-      - name: Initialize CodeQL
-        uses: github/codeql-action/init@v1
-        with:
-          languages: ${{ matrix.language }}
+    - name: Install dependencies
+      run: npm install
 
-      - name: Autobuild
-        uses: github/codeql-action/autobuild@v1
+    - name: Run tests
+      run: npm test
 
-      - name: Perform CodeQL Analysis
-        uses: github/codeql-action/analyze@v1
-  deploy:
-    runs-on: ubuntu-latest
-    needs: [build]
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-      - name: Deploy to GitHub Pages
-        uses: JamesIves/github-pages-deploy-action@4.1.4
-        with:
-          branch: gh-pages
-          folder: build
+    - name: Build for production
+      run: npm run build
+
+    - name: Deploy to GitHub Pages
+      uses: peaceiris/actions-gh-pages@v3
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: ./build
